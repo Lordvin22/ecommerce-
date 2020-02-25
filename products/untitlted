@@ -1,0 +1,59 @@
+
+class User(models.Model):
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+
+class Log(models.Model):
+    id_user = models.ManyToManyField()
+    sentence = models.CharField(max_length=100, blank=True)
+
+class Purchase(models.Model):
+    id_product = models.ManyToManyField(Products)
+    id_user = models.ManyToManyField(User)
+    status = models.IntegerField(blank=True)
+
+class Cart(models.Model):
+    id_purchase = models.ManyToManyField(Purchase)
+    quantity = models.IntegerField()
+
+
+
+       def get_queryset(self):
+        queryset = Product2.objects.filter(id=self.kwargs["pk"])
+        return queryset
+
+
+
+            def put(self, request, pk, format=None):
+        product = self.get_object_or_404(pk)
+        serializer = Product2Serializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+         def get(self, request, format=None):
+        product = Product2.objects.all()
+        serializer = Product2Serializer(product, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = Product2Serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk, format=None):
+        product = self.get_object(pk)
+        serializer = Product2Serializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        product = self.get_object(pk)
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT, data=request)
