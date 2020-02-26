@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^v1/get_productdetail/(?P<pk>[0-9]+)/$', ProductoDetalle.as_view()),
     url(r'^v1/products/(?P<pk>.+)/purchase/', PurchaseCreate.as_view(), name='get_purchase'),
     url(r'^v1/purchaselist/$', PurchaseList.as_view(), name='get_purchaselist'),
-    url(r'^v1/get_purchasedetail/(?P<pk>[0-9]+)/$', PurchaseDetail.as_view()),
+    url(r'^v1/products/(?P<pk>.+)/get_purchasedetail/(?P<pk1>[0-9]+)/$', PurchaseDetail.as_view()),
     url(r'^v1/get_productname/(?P<name>.+)/$', GetProductName.as_view(),name='get_productname'),
     url(r'^v3/user/$', UserCreate.as_view(), name='user_list'),
 
