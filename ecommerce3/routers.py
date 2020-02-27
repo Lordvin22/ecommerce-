@@ -3,7 +3,7 @@ from django.contrib import admin
 from rest_framework import routers
 from products.viewsets import Product2ViewSets\
     ,ProductList, GetProductId, GetProductName,PurchaseCreate,PurchaseList, \
-    UserCreate, ProductoDetalle, PurchaseDetail, UserType, CartCreate, Javi, SnippetList
+    UserCreate, ProductoDetalle, PurchaseDetail, UserType, CartCreate, Javi, GetUser
 
 
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^v1/products/(?P<pk>.+)/cart/', CartCreate.as_view(), name='get_cart'),
 
     url(r'^v3/userjavi/', Javi.as_view(), name='user_create'),
+    url(r'^v3/getuser/', GetUser.as_view(), name='user_create'),
 
 ]
 
