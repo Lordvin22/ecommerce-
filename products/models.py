@@ -19,8 +19,9 @@ class Product2(models.Model):
 
 class User(models.Model):
     username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    sucess = models.BooleanField(default=True, blank=True)
+    password = models.CharField(max_length=50, blank=False)
+    type = models.BooleanField(default=True, blank=True)
+
 
     def __unicode__(self):
         return '{}'.format(self.username)
@@ -30,16 +31,39 @@ class Log(models.Model):
     id_user = models.ManyToManyField(User)
     sentence = models.CharField(max_length=100)
 
-
-class Purchase(models.Model):
-    id_product = models.ForeignKey(Product2, on_delete=models.CASCADE, blank=True, default=True)
-    id_user = models.ManyToManyField(User)
-    status = models.IntegerField(blank=True)
+class StatusPurchase(models.Model):
+    description = models.CharField(max_length=100)
+    activo = models.BooleanField(default=True)
 
     def __unicode__(self):
-        return '{}'.format(self.id_product)
+        return self.description
+
+
+
+"""
+CartPurchase:
+    - price, product, cart, quantity 
+"""
 
 
 class Cart(models.Model):
-    id_purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, blank=True, default=True)
+    user = models.ForeignKey(User)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return unicode(self.user)
+
+
+
+    """
+    user_id
+    price 
+    
+    """
+
+
+class PurchaseCartOK(models.Model):
+    cart = models.ForeignKey(Cart)
+    product = models.ForeignKey(Product2)
+    price = models.FloatField()
     quantity = models.IntegerField()

@@ -26,7 +26,7 @@ SECRET_KEY = '(k8a^8yd9cvw)b0s&5gknu@-+mr8n-d0*%2njq3j-k=x!=(iab'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+CSRF_COOKIE_HTTPONLY = True
 
 # Application definition
 CORS_ORIGIN_ALLOW_ALL = True
@@ -48,11 +48,13 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+
 ]
 
 

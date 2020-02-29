@@ -57,3 +57,183 @@ class Cart(models.Model):
         product = self.get_object(pk)
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT, data=request)
+
+
+
+
+        def post(self, request,):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+
+              if user.type == True:
+            response = {
+                "message": 'success',
+                "type": user.type
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            response = {
+                "message": 'false'
+            }
+            return Response(response,status=status.HTTP_403_FORBIDDEN)
+
+
+            (?P<pk>.+)/$
+
+
+
+            username=username, password=password, type=type
+
+                   username = request.data.get("username")
+            password = request.data.get("password")
+            type = request.data.get("type")ç
+
+
+          extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data['username']
+        )
+        #user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+
+          print sold
+        serializer = CartSerializer
+        if sold != 0:
+            serializer.save()
+            sold += sold-1
+            sold.sold = True
+            response = {
+                "message": 'Product bought'
+            }
+            return Response(response,status=status.HTTP_200_OK)
+
+        else:
+            response = {
+                "message": 'error'
+            }
+             return Response(response, status=status.HTTP_404_NOT_FOUND)
+
+
+                queryset = Product2.objects.filter(pk=pk)
+        print queryset
+        stock = Product2.
+        print stock
+        sold = Product2.objects.get(stock=stock)
+        print sold
+        serializer = CartSerializer
+        if sold != 0:
+            serializer.save()
+            sold += sold-1
+            sold.sold = True
+            response = {
+                "message": 'Product bought'
+            }
+            return Response(response,status=status.HTTP_200_OK)
+
+        else:
+            response = {
+                "message": 'error'
+            }
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
+
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return super(UserSerializer, self).create(validated_data)
+        reset_hasher()
+
+
+            parser_classes = (FormParser, JSONParser, MultiPartParser)
+    def post(self, request):
+        print [request.data]
+        serializer_class = serializers.UserSerializer
+        permission_classes = [rest_permissions.IsAuthenticated]
+        print serializer_class
+        #if serializer_class.is_valid():
+         #   serializer_class.save()
+            return Response({'received data': request.data}, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response({'received data': request.data}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+             if password == actual_user.password:
+     if actual_user.type == True:
+          response = {
+              "message": 'success',
+              "type": str(actual_user.type),
+          }
+          return Response(response, status=status.HTTP_200_OK)
+     else:
+         response = {
+             "message": 'success',
+             "type" : str(actual_user.type),
+         }
+         return Response(response, status=status.HTTP_200_OK)
+
+
+ print "producto " + str(product_id)
+ print "id user" + str(user_id)
+ print "precio del producto" + str(product.price)
+ print "descripcion " + str(product.description)
+
+
+
+  cart_id = request.POST.get('pk') # el string es como lo manda en el request
+        total = 0
+
+        cart = PurchaseCartOK.objects.filter(product_id=cart_id)
+
+        for c in cart:
+            total += c.product.price * c.quantity
+
+        return Response({"total_amount": str(total)}, safe=False)
+
+
+
+        def put(self, request):
+        # create an object and redirect to detail page
+        modelform = modelform_factory(Product2)
+        form = modelform(request.PUT)
+        if form.is_valid():
+            form.save()
+        return redirect('restview')
+
+             data = {
+                "id": p.product.id,
+                "product": p.product.name,
+                "price": p.product.price,
+                "stock".
+            }
+
+
+            stock1 = Product2.objects.get('stock')
+              cart = Product2.objects.filter(id=product_id)
+        print "product_id" + str(cart)
+
+
+         val = 10
+        topic = Product2.objects.filter(pk=product_id,stock=val)
+
+        print topic
+
+
+
+        def createPurchase(request):
+    response_list = []
+    if request.method == 'POST':
+        product_id = request.POST.get('pk')
+        quantity = request.POST.get('quantity')
+        price = request.POST.get('price')
+        PurchaseCartOK.save()
+
+        }
+
+          def get_queryset(self):
+        queryset = PurchaseCartOK.objects.filter(id_product=self.kwargs["pk"])
