@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^v1/add_products/$', CreateProduct.as_view(), name='product_add'),
     url(r'^v1/get_productid/(?P<id>.+)', GetProductId.as_view(), name='get_productid'),
     url(r'^v1/get_productdetail/(?P<pk>[0-9]+)/$', ProductoDetalle.as_view()),
-    url(r'^v1/purchase/$', createPurchase, name='get_purchase'),
+    url(r'^v1/cart/$', createCart, name='getCart'),
     url(r'^v1/purchase1/$', PurchaseCartCreate, name='get_purchase'),
 
     url(r'^v1/purchaselist/$', PurchaseCartList.as_view(), name='get_purchaselist'),
@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^v3/getuserproducts/$', getPurchaseCartHistory, name='getPurchaseHistory'),
     url(r'^v3/getcart/$', computeTicketValue, name='getCart'),
     url(r'^v3/buyproduct/$', BuyProduct, name='buyproduct'),
+    url(r'^v3/getCartlist/$', GetCart.as_view(), name='buyproduct'),
 
 ]
 

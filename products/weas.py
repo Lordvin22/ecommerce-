@@ -10,12 +10,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from rest_framework.parsers import JSONParser,FormParser,MultiPartParser
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import QueryDict
-from django.http import JsonResponse, JsonResponse
-from django.db.models import Exists
-
+from django.http import JsonResponse, HttpResponse
 
 
 class Product2ViewSets(viewsets.ModelViewSet):
@@ -95,12 +93,13 @@ class GetProductName(generics.ListAPIView):
 
 
 class PurchaseCartCreate(generics.ListCreateAPIView):
-    parser_classes = (FormParser, JSONParser,MultiPartParser)
-    #media_type = 'text/plain'
-    #serializer_class = CartSerializer
+    parser_classes = (FormParser, JSONParser, MultiPartParser)
+
+    # media_type = 'text/plain'
+    # serializer_class = CartSerializer
     def post(self, request):
         print request.data
-        #product = Product2.objects.get(pk=pk)
+        # product = Product2.objects.get(pk=pk)
         user_id = request.data.get("user_id")
         print user_id
         product_id = request.data.get("product_id")
@@ -108,14 +107,11 @@ class PurchaseCartCreate(generics.ListCreateAPIView):
         status = request.data.get("status_id")
         print status
 
+        # queryset = Product2.objects.filter(id=self.kwargs["pk"])
+        # print queryset
 
-
-        #queryset = Product2.objects.filter(id=self.kwargs["pk"])
-        #print queryset
-
-
-        #query_dict = QueryDict('', mutable=True)
-        #query_dict.update(request.data)
+        # query_dict = QueryDict('', mutable=True)
+        # query_dict.update(request.data)
 
         serializer_class = CartSerializer(data=request.data)
         print serializer_class.is_valid()
@@ -126,11 +122,11 @@ class PurchaseCartCreate(generics.ListCreateAPIView):
             }
 
         else:
-            response ={
+            response = {
                 "message": 'error'
             }
 
-        return JsonResponse(response, content_type='application/json')
+        return HttpResponse(response, content_type='application/json')
 
     def delete(self, request, pk, format=None):
         product = PurchaseCartOK.objects.get(pk=pk)
@@ -149,8 +145,6 @@ class PurchaseCartCreate(generics.ListCreateAPIView):
 class PurchaseCartList(generics.ListCreateAPIView):
     queryset = PurchaseCartOK.objects.all()
     serializer_class = PurchaseCartSerializer
-
-
 
 
 class PurchaseCartDetail(APIView):
@@ -175,20 +169,19 @@ class PurchaseCartDetail(APIView):
 
 
 class UserType(APIView):
-    parser_classes = (FormParser, JSONParser, MultiPartParser)
     def post(self, request):
         username = request.data.get("username")
-        password = request.data.get("password")
+        password = request.data.get("pass")
         actual_user = User.objects.get(username=username)
 
-        if password==actual_user.password:
+        if password == actual_user.password:
             print [request.data]
             response = {
                 "message": 'success',
                 "id": actual_user.id,
-                "type" : str(actual_user.type),
+                "type": str(actual_user.type),
             }
-            return Response(response,status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
         else:
             print ('no entro')
             response = {
@@ -198,12 +191,7 @@ class UserType(APIView):
             return Response(response, status=status.HTTP_403_FORBIDDEN)
 
 
-
-
-
 class UserCreate(generics.ListCreateAPIView):
-    parser_classes = (FormParser, JSONParser,MultiPartParser)
-
     def get(self, request):
         user = User.objects.all()
         serializer = UserSerializer(user)
@@ -253,16 +241,15 @@ class GetUser(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
 
+
 class PurchaseCartViewUser(generics.ListCreateAPIView):
 
+    def get_queryset(self):
+        response_list = []
+        queryset = PurchaseCartOK.objects.filter(id=self.kwargs["pk"])
+        return queryset
 
-   def get_queryset(self):
-     response_list = []
-     queryset = PurchaseCartOK.objects.filter(id=self.kwargs["pk"])
-     return queryset
-
-   serializer_class = PurchaseCartSerializer
-
+    serializer_class = PurchaseCartSerializer
 
 
 # product_name, quantity, price, id
@@ -270,26 +257,24 @@ class PurchaseCartViewUser(generics.ListCreateAPIView):
 @csrf_exempt
 def getPurchaseCartHistory(request):
     print " Is in"
-    response_list  = []
+    response_list = []
     product_id = request.POST.get('cart_id')
     PurchaseCarts = PurchaseCartOK.objects.filter(cart_id=product_id)
-    if PurchaseCarts.count() > 0:
-        for p in PurchaseCarts:
-            print p.pk
-            data = {
-                "product_name": p.product.name,
-                "price": p.product.price,
-                "product_id": p.product.pk
-            }
-            response_list.append(data)
 
-        return JsonResponse(response_list, safe=False)
-    else:
-        return JsonResponse('error', safe=False)
+    for p in PurchaseCarts:
+        print p.pk
+        data = {
+            "product_name": p.product.name,
+            "price": p.product.price,
+            "product_id": p.product.pk
+        }
+        response_list.append(data)
+
+    return HttpResponse(response_list, content_type='application/json')
+
 
 @csrf_exempt
 def computeTicketValue(request):
-
     if request.method == 'POST':
         cart_id = request.POST.get('cart_id')  # el string es como lo manda en el request
         print cart_id
@@ -298,10 +283,10 @@ def computeTicketValue(request):
         cart = Product2.objects.filter(id=cart_id)
 
         for c in cart:
-
             total = c.price
 
-        return JsonResponse({"total_amount": str(total)}, content_type='application/json')
+        return HttpResponse({"total_amount": str(total)}, content_type='application/json')
+
 
 @csrf_exempt
 def BuyProduct(request):
@@ -310,102 +295,137 @@ def BuyProduct(request):
         total = 0
         a = 0
         cart_id = request.POST.get('cart_id')
-        product_id = request.POST.get('product_id')
+        product_id = request.POST.get('pk')
         price = request.POST.get('price')
         quantity = request.POST.get('quantity')
         print "qu" + quantity
         print product_id
+        print price
         product = Product2.objects.get(pk=product_id)
-        purchase = PurchaseCartOK(cart_id=cart_id, product_id=product_id, price=price, quantity=quantity)
+        cart_id = Cart.objects.get(pk=cart_id)
+        print cart_id
+        purchase = PurchaseCartOK.save()
         product.stock -= int(quantity)
         total = int(quantity) * product.price
         print "total" + str(total)
         a = 5 * 3
         print a
         if product.stock > 0:
-            product.save()
             purchase.save()
 
             data = {
                 "status": 1,
                 "name": product.name,
                 "price": total,
-                "stock": str(product.stock)
+                "stock": product.stock
             }
             response_list.append(data)
 
         else:
-            return JsonResponse({'status': 'error'}, safe=False)
+            return HttpResponse('error')
 
         print product.stock
 
-        #for p in Product2:
-        #PurchaseCartOK.save()
-        return JsonResponse(response_list, safe=False)
+        # for p in Product2:
+        # PurchaseCartOK.save()
+        return HttpResponse(response_list, content_type='application/json')
 
-
-
-    #return Response(status=status.HTTP_400_BAD_REQUEST)
+    # return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
-def createCart( request):
+@csrf_exempt
+def createCart(request):
+        response_list = []
+        if request.method == 'POST':
+            user_id = request.POST.get("user_id")
+            cart = Cart()
+
+            for c in cart:
+                data = {
+                    "id": c.id,
+                    "user_id": c.user_id,
+                    "name": c.user.username
+
+                }
+                c.save()
+            response_list.append(data)
+
+            print user_id
+
+        return HttpResponse(response_list, content_type='application/json')
+
+
+
+
+
+
+
+@csrf_exempt
+def createCart(request):
+    response_list = []
+    if request.method == 'POST':
+        user_id = request.POST.get("user_id")
+        cart = Cart.objects.filter(id=user_id)
+
+        for c in cart:
+            data = {
+            "id": c.id,
+            "user_id":c.user_id,
+
+        }
+        response_list.append(data)
+
+        print user_id
+        #cart.save()
+    return HttpResponse(response_list, content_type='application/json')
+
+
+
+
+
+
+
+
+
+
+
+
+@csrf_exempt
+def createCart(request):
     response_list = []
     form = Cart()
     if request.method == 'POST':
         user_id = request.POST.get("user_id")
-        cart = Cart(user_id=user_id)
+        cart = Cart.objects.filter(user_id=user_id)
+        form = Cart(request.POST)
+        for c in cart:
+            data = {
+            "id": c.id,
+            "user_id":c.user_id,
+            "name": c.user.username
 
+        }
+        response_list.append(data)
 
-        print cart
-
-    return JsonResponse({'status': 'success'}, safe=False)
-
-
-
-
-
-class GetCart(generics.ListAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = serializers.CartSerializer
-
-
-class PurchaseCartCreate2(generics.ListCreateAPIView):
-    parser_classes = (FormParser, JSONParser,MultiPartParser)
-    def post(self, request):
-        print request.data
-        user_id = request.data.get("user_id")
-        serializer_class = CartSerializer(data=request.data)
         print user_id
-        if serializer_class.is_valid():
-            serializer_class.save()
-            response = {
-                "message": 'success',
-
-            }
-
-        else:
-            response ={
-                "message": 'error'
-            }
-
-        return JsonResponse(request, content_type='application/json')
+        c.save()
+    return HttpResponse(response_list, content_type='application/json')
 
 
 
+  form = Cart(request.POST)
+        for c in cart:
+            data = {
+            "id": c.id,
+            "user_id":c.user_id,
+            "name": c.user.username
 
-  
+        }
+        c.save()
+        response_list.append(data)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+try:
+    product_id = request.POST.get('cart_id')
+    PurchaseCarts = PurchaseCartOK.objects.filter(cart_id=product_id)
+except PurchaseCartOK.DoesNotExist:

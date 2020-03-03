@@ -31,12 +31,7 @@ class Log(models.Model):
     id_user = models.ManyToManyField(User)
     sentence = models.CharField(max_length=100)
 
-class StatusPurchase(models.Model):
-    description = models.CharField(max_length=100)
-    activo = models.BooleanField(default=True)
 
-    def __unicode__(self):
-        return self.description
 
 
 
@@ -46,24 +41,27 @@ CartPurchase:
 """
 
 
+
+
+class StatusPurchase(models.Model):
+    description = models.CharField(max_length=100)
+    activo = models.BooleanField(default=True)
+
+
+    def __unicode__(self):
+        return self.description
+
 class Cart(models.Model):
     user = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
+    status = models.ForeignKey(StatusPurchase)
 
     def __unicode__(self):
         return unicode(self.user)
-
-
-
-    """
-    user_id
-    price 
-    
-    """
-
 
 class PurchaseCartOK(models.Model):
     cart = models.ForeignKey(Cart)
     product = models.ForeignKey(Product2)
     price = models.FloatField()
     quantity = models.IntegerField()
+
